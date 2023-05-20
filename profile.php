@@ -2,7 +2,6 @@
 <?php
 session_start();
 
-// Проверка авторизации пользователя
 if (!isset($_SESSION['username'])) {
     header('Location: index.php');
     exit();
