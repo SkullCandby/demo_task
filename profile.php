@@ -10,21 +10,17 @@ if (!isset($_SESSION['username'])) {
 
 $username = $_SESSION['username'];
 
-// Данные для подключения к MySQL
 $db_host = "localhost";
 $db_user = "root";
 $db_pass = "GlebDasha2001";
 $db_name = "demo";
 
-// Создание соединения
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
-// Проверка соединения
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Запрос к БД
 $sql = "SELECT * FROM users WHERE username = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $username);
@@ -63,10 +59,8 @@ $conn->close();
 
     <script>
         window.onload = function() {
-            // Показ анимационного блока
             document.getElementById('login-successful').className = 'login-successful-show';
 
-            // Скрытие анимационного блока через 10 секунд
             setTimeout(function() {
                 document.getElementById('login-successful').className = 'login-successful-hide';
             }, 10000);
