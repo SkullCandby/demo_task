@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Проверка, если пользователь уже авторизован, перенаправить на страницу профиля
 if (isset($_SESSION['username'])) {
     header('Location: profile.php');
     exit();
 }
 
-// Подключение к базе данных
 $host = 'localhost';
 $dbUsername = 'root';
 $dbPassword = 'GlebDasha2001';
@@ -19,9 +17,7 @@ if ($connection->connect_error) {
     die('Connection failed: ' . $connection->connect_error);
 }
 
-// Проверка, если пользователь отправил форму регистрации
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Обработка отправленных данных регистрации
     $username = $_POST['username'];
     $password = $_POST['password'];
     $name = $_POST['name'];
@@ -32,32 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     move_uploaded_file($photoLocation, $photoDestination);
 
-    // Проверка, что пользователь заполнил все поля
     if (!empty($username) && !empty($password) && !empty($name) && !empty($birthdate)) {
-        // Проверка наличия пользователя с указанным логином
         $query = "SELECT * FROM users WHERE username = '$username'";
         $result = $connection->query($query);
 
         if ($result->num_rows > 0) {
-            // Ошибка регистрации - пользователь уже существует
             $error_message = 'Пользователь с таким именем уже существует.';
         } else {
-            // Хэширование пароля
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            // Создание новой записи пользователя в базе данных
             $query = "INSERT INTO users (username, password, name, birthdate, photo) VALUES ('$username', '$hashedPassword', '$name', '$birthdate', '$photoDestination')";
             $connection->query($query);
 
-            // Регистрация успешна - сохранение данных в сессии
             $_SESSION['username'] = $username;
 
-            // Перенаправление пользователя на страницу профиля
             header('Location: profile.php');
             exit();
         }
     } else {
-        // Ошибка регистрации - не заполнены все поля
         $error_message = 'Пожалуйста, заполните все поля.';
     }
 }
